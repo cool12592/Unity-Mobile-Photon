@@ -68,6 +68,11 @@ public class GameManager : MonoBehaviour
     //그리고 custom property는 object 형식이라 박싱언박싱일어나서 안좋은듯
     private void Update()
     {
+        CheckAndRunRankingBoardCoolTime();
+    }
+
+    void CheckAndRunRankingBoardCoolTime()
+    {
         if (PhotonNetwork.IsMasterClient)
         {
             if (rankingBoardsynchCoolTimer > 0f) //쿨타임마다 딕셔너리 동기화 (딕셔너리 복사작업을 프레임마다 하는건 애바인듯)
@@ -81,6 +86,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
     private void SynchRankingBoard()
     {
         if (PhotonNetwork.IsMasterClient)
