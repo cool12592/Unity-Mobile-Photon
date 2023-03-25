@@ -8,10 +8,10 @@ using Unity.Jobs;        // IJob, IJobParallelFor
 using UnityEngine.Jobs;  // IJobParallelForTransform
 using Unity.Burst;       // BurstCompile
 
-public class PlayerMovementScript : MonoBehaviourPunCallbacks, IPunObservable
+public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 {
     public PhotonView PV;
-    private PlayerHealthScript health;
+    private PlayerHealth health;
     private playerScript player;
     private GameObject dashBtnObject;
     private Button dashBtn;
@@ -32,7 +32,7 @@ public class PlayerMovementScript : MonoBehaviourPunCallbacks, IPunObservable
     void Start()
     {
         PV = GetComponent<PhotonView>();
-        health = GetComponent<PlayerHealthScript>();
+        health = GetComponent<PlayerHealth>();
 
         if (PV.IsMine)
         {

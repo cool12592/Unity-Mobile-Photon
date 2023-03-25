@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class PlayerHealthScript : MonoBehaviourPunCallbacks, IPunObservable
+public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
 {
     public PhotonView PV;
     [SerializeField]

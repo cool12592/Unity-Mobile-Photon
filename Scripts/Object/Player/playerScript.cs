@@ -5,12 +5,19 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
 using Unity.Collections; // NativeArray
+using Cinemachine;
 
 public class playerScript : MonoBehaviourPunCallbacks
 {
     public PhotonView PV;
     public Text NickNameText;
     public bool isActive = true;
+
+    [SerializeField]
+    private GameObject moveJoystick;
+    [SerializeField]
+    private GameObject aimJoystick;
+    private Button attackButton;
 
     // Start is called before the first frame update
     private void Awake()
@@ -22,7 +29,33 @@ public class playerScript : MonoBehaviourPunCallbacks
         {   
             GameManager.Instance.myplayer = gameObject;
             GameObject.Find("ObjectPoolParent").transform.GetChild(0).gameObject.SetActive(true);
+            InitCamera();
+            InitJoystick();
+            
         }
+    }
+
+    void InitCamera()
+    {
+        // 2D 카메라
+        var CM = GameObject.Find("CMCamera").GetComponent<CinemachineVirtualCamera>();
+        CM.Follow = transform;
+        CM.LookAt = transform;
+    }
+
+    void InitJoystick()
+    {
+        moveJoystick = GameObject.Find("Canvas").transform.Find("Move_Joystick").gameObject;
+        moveJoystick.SetActive(true);
+        moveJoystick.GetComponent<JoyStickScript>().MyPlayer = gameObject;
+
+
+        aimJoystick = GameObject.Find("Canvas").transform.Find("Aim_Joystick").gameObject;
+        aimJoystick.GetComponent<JoyStickScript>().MyPlayer = gameObject;
+
+
+        attackButton = aimJoystick.transform.Find("attack_BTN").gameObject.GetComponent<Button>();
+        attackButton.onClick.AddListener(GetComponent<PlayerAttack>().Attack);
     }
 
     private void Start()
@@ -46,7 +79,7 @@ public class playerScript : MonoBehaviourPunCallbacks
         if (PV.IsMine)
         {
             ChangeRandomPosition();
-            GetComponent<PlayerMovementScript>().DashInit();
+            GetComponent<PlayerMovement>().DashInit();
         }
     }
 

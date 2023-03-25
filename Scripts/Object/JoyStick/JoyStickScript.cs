@@ -47,7 +47,7 @@ public class JoyStickScript : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndD
         if (MyPlayer)
         {
             if(joystickType==JoystickType.Move)
-               MyPlayer.GetComponent<PlayerMovementScript>().Move(Vector2.zero);
+               MyPlayer.GetComponent<PlayerMovement>().Move(Vector2.zero);
         }
 
     }
@@ -77,14 +77,14 @@ public class JoyStickScript : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndD
         {
             if (joystickType == JoystickType.Move)
             {
-                MyPlayer.GetComponent<PlayerMovementScript>().Move(inputDirection);
+                MyPlayer.GetComponent<PlayerMovement>().Move(inputDirection);
             }
             else if (joystickType == JoystickType.Aim)
             {
-                MyPlayer.GetComponent<PlayerShootingScript>().Attack();
+                MyPlayer.GetComponent<PlayerAttack>().Attack();
 
                 if (inputDirection != null)
-                MyPlayer.GetComponent<PlayerGunAndAimScript>().AimMove(inputDirection);
+                MyPlayer.GetComponent<PlayerPistol>().AimMove(inputDirection);
             }
         }
     }

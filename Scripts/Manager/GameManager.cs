@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-        Screen.SetResolution(960, 540, false);
+        //Screen.SetResolution(960, 540, false);
     }
 
     public static GameManager Instance
@@ -162,7 +162,7 @@ public class GameManager : MonoBehaviour
     {
         if (killer == PhotonNetwork.LocalPlayer.NickName)
         {
-            myplayer.GetComponent<PlayerHealthScript>().HealHP(0.3f);
+            myplayer.GetComponent<PlayerHealth>().HealHP(0.3f);
         }
 
         if (PhotonNetwork.IsMasterClient)

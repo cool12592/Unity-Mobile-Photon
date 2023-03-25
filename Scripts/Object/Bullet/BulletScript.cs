@@ -43,7 +43,7 @@ public class BulletScript : MonoBehaviour
         //맞는쪽입장? (느린쪽이란게 이거 동기화되야하니까 억울함방지)
         if (ownerName!="" && PhotonNetwork.NickName != ownerName && col.tag == "Player" && col.GetComponent<PhotonView>().IsMine) // 느린쪽에 맞춰서 Hit판정
         {
-            col.GetComponent<PlayerHealthScript>().TakeDamage(ownerName);
+            col.GetComponent<PlayerHealth>().TakeDamage(ownerName);
             PV.RPC("ReturnObjectRPC", RpcTarget.AllBuffered);
         }
     }

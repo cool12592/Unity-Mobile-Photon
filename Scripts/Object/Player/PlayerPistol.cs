@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class PlayerGunAndAimScript : MonoBehaviourPunCallbacks
+public class PlayerPistol : MonoBehaviourPunCallbacks
 {
     public PhotonView PV;
     private GameObject aimObject;
