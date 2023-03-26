@@ -95,18 +95,18 @@ public class GameStateManager : MonoBehaviour
         LobbyStateAction?.Invoke();
 
         if (PhotonNetwork.IsMasterClient)
-            RankingBoardManager.Instance.StartButton.SetActive(true);
+            GameManager.Instance.StartButton.SetActive(true);
     }
 
     private void EnterReadyState()
     {
         ReadyStateAction?.Invoke();
 
-        if (RankingBoardManager.Instance.ReGameButton.IsActive())
-            RankingBoardManager.Instance.ReGameButton.onClick.Invoke();
+        if (GameManager.Instance.ReGameButton.IsActive())
+            GameManager.Instance.ReGameButton.onClick.Invoke();
 
         if (PhotonNetwork.IsMasterClient)
-            RankingBoardManager.Instance.StartButton.SetActive(false);
+            GameManager.Instance.StartButton.SetActive(false);
         
         if (PhotonNetwork.IsMasterClient)
             StartCoroutine(ReadyCoroutine());
@@ -116,16 +116,16 @@ public class GameStateManager : MonoBehaviour
     {
         FightStateAction?.Invoke();
 
-        RankingBoardManager.Instance.AimJoystick.SetActive(true);
+        GameManager.Instance.AimJoystick.SetActive(true);
     }
 
     private void EnterResultState()
     {
         ResultStateAction?.Invoke();
-        RankingBoardManager.Instance.AimJoystick.SetActive(false);
-        RankingBoardManager.Instance.ResponePanel.SetActive(false);
-        RankingBoardManager.Instance.ResultPanel.SetActive(true);
-        RankingBoardManager.Instance.ResultText.text = "경기 결과\n" + RankingBoardManager.Instance.RangkingLogText.text;
+        GameManager.Instance.AimJoystick.SetActive(false);
+        GameManager.Instance.ResponePanel.SetActive(false);
+        GameManager.Instance.ResultPanel.SetActive(true);
+        GameManager.Instance.ResultText.text = "경기 결과\n" + GameManager.Instance.RangkingLogText.text;
     }
 
     public void OnReadyState()
@@ -138,18 +138,18 @@ public class GameStateManager : MonoBehaviour
 
     IEnumerator ReadyCoroutine()
     {
-        RankingBoardManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "3",200);
+        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "3",200);
         yield return waitForSecond;
-        RankingBoardManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "2", 200);
+        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "2", 200);
         yield return waitForSecond;
-        RankingBoardManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "1", 200);
+        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "1", 200);
         yield return waitForSecond;
-        RankingBoardManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "게임 시작!", 200);
+        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "게임 시작!", 200);
 
 
         PV.RPC("ChangeGameStateForAllUser", RpcTarget.AllBuffered,GameState.Fight);
 
         yield return waitForSecond;
-        RankingBoardManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "",100);
+        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "",100);
     }
 }

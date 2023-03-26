@@ -27,7 +27,7 @@ public class playerScript : MonoBehaviourPunCallbacks
 
         if (PV.IsMine)
         {   
-            RankingBoardManager.Instance.myplayer = gameObject;
+            GameManager.Instance.myplayer = gameObject;
             GameObject.Find("ObjectPoolParent").transform.GetChild(0).gameObject.SetActive(true);
             InitCamera();
             InitJoystick();

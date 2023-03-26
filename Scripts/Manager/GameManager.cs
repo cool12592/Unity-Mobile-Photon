@@ -6,10 +6,10 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
 using System;
-public class RankingBoardManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public PhotonView PV;
-    private static RankingBoardManager instance = null;
+    private static GameManager instance = null;
     private Text ScreenText;
     public Text RangkingLogText { get; private set; }
     private Queue<KeyValuePair<string, string>> killLogQueue = new Queue<KeyValuePair<string, string>>();
@@ -36,7 +36,7 @@ public class RankingBoardManager : MonoBehaviour
         //Screen.SetResolution(960, 540, false);
     }
 
-    public static RankingBoardManager Instance
+    public static GameManager Instance
     {
         get
         {

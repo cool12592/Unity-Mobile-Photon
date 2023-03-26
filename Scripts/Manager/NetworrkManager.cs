@@ -51,9 +51,9 @@ public class NetworrkManager : MonoBehaviourPunCallbacks
         //방장입장용 (밑에선안됨)
         if (PhotonNetwork.IsMasterClient)
         {
-            RankingBoardManager.Instance.StartRankingBoardCoroutine();
+            GameManager.Instance.StartRankingBoardCoroutine();
             GameStateManager.Instance.ChangeGameState(GameStateManager.GameState.Lobby);
-            RankingBoardManager.Instance.UserJoin(PhotonNetwork.LocalPlayer.NickName);
+            GameManager.Instance.UserJoin(PhotonNetwork.LocalPlayer.NickName);
             
         }
     }
@@ -65,7 +65,7 @@ public class NetworrkManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            RankingBoardManager.Instance.UserJoin(newPlayer.NickName);
+            GameManager.Instance.UserJoin(newPlayer.NickName);
         }
     }
 
@@ -79,8 +79,8 @@ public class NetworrkManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            RankingBoardManager.Instance.StartRankingBoardCoroutine();
-            RankingBoardManager.Instance.UserLeft(otherPlayer.NickName);
+            GameManager.Instance.StartRankingBoardCoroutine();
+            GameManager.Instance.UserLeft(otherPlayer.NickName);
         }
     }
 
@@ -93,13 +93,13 @@ public class NetworrkManager : MonoBehaviourPunCallbacks
     public void spawn()
     {
         PhotonNetwork.Instantiate("Player", new Vector3(Random.Range(-10f,10f), Random.Range(-5f, 5f),0), Quaternion.identity);
-        RankingBoardManager.Instance.ResponePanel.SetActive(false);
+        GameManager.Instance.ResponePanel.SetActive(false);
     }
 
     public void NewGameSpawn()
     {
         PhotonNetwork.Instantiate("Player", new Vector3(Random.Range(-10f, 10f), Random.Range(-5f, 5f), 0), Quaternion.identity);
-        RankingBoardManager.Instance.ResultPanel.SetActive(false);
+        GameManager.Instance.ResultPanel.SetActive(false);
 
         GameStateManager.Instance.ChangeGameState(GameStateManager.GameState.Lobby);
     }

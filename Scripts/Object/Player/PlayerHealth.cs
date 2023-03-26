@@ -117,7 +117,7 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
     {
         player.isActive = false;
         rigidBody.velocity = Vector2.zero;
-        RankingBoardManager.Instance.ReportTheKill(recentAttacker, PhotonNetwork.NickName);
+        GameManager.Instance.ReportTheKill(recentAttacker, PhotonNetwork.NickName);
         characterAnim.SetTrigger("death");
     }
 
@@ -126,7 +126,7 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (PV.IsMine)
         {
-            RankingBoardManager.Instance.ResponePanel.SetActive(true);
+            GameManager.Instance.ResponePanel.SetActive(true);
             PV.RPC("DestroyRPC", RpcTarget.AllBuffered); // AllBuffered로 해야 제대로 사라져 복제버그가 안 생긴다
         }
     }
