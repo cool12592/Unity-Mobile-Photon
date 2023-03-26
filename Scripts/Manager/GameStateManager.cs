@@ -11,7 +11,7 @@ public class GameStateManager : MonoBehaviour
     public PhotonView PV;
     private static GameStateManager instance = null;
     
-    public enum GameState {Nope, Lobby, Ready, Fight, Result};
+    public enum GameState {None, Lobby, Ready, Fight, Result};
     public GameState NowGameState { get; private set; }
 
     public event Action LobbyStateAction;
@@ -19,6 +19,7 @@ public class GameStateManager : MonoBehaviour
     public event Action FightStateAction;
     public event Action ResultStateAction;
 
+    WaitForSeconds waitForSecond = new WaitForSeconds(1f);
 
     private void Awake()
     {
@@ -48,8 +49,8 @@ public class GameStateManager : MonoBehaviour
     private void Start()
     {
         PV = GetComponent<PhotonView>();
-        NowGameState = GameState.Nope;
-        GameObject.Find("Canvas").transform.Find("gameStartBTN").gameObject.GetComponent<Button>().onClick.AddListener(GameStateManager.Instance.OnReadyState);
+        NowGameState = GameState.None;
+        GameObject.Find("Canvas").transform.Find("gameStartBTN").gameObject.GetComponent<Button>().onClick.AddListener(OnReadyState);
     }
 
     [PunRPC]
@@ -94,18 +95,18 @@ public class GameStateManager : MonoBehaviour
         LobbyStateAction?.Invoke();
 
         if (PhotonNetwork.IsMasterClient)
-            GameManager.Instance.StartButton.SetActive(true);
+            RankingBoardManager.Instance.StartButton.SetActive(true);
     }
 
     private void EnterReadyState()
     {
         ReadyStateAction?.Invoke();
 
-        if (GameManager.Instance.ReGameButton.IsActive())
-            GameManager.Instance.ReGameButton.onClick.Invoke();
+        if (RankingBoardManager.Instance.ReGameButton.IsActive())
+            RankingBoardManager.Instance.ReGameButton.onClick.Invoke();
 
         if (PhotonNetwork.IsMasterClient)
-            GameManager.Instance.StartButton.SetActive(false);
+            RankingBoardManager.Instance.StartButton.SetActive(false);
         
         if (PhotonNetwork.IsMasterClient)
             StartCoroutine(ReadyCoroutine());
@@ -115,40 +116,40 @@ public class GameStateManager : MonoBehaviour
     {
         FightStateAction?.Invoke();
 
-        GameManager.Instance.AimJoystick.SetActive(true);
+        RankingBoardManager.Instance.AimJoystick.SetActive(true);
     }
 
     private void EnterResultState()
     {
         ResultStateAction?.Invoke();
-        GameManager.Instance.AimJoystick.SetActive(false);
-        GameManager.Instance.ResponePanel.SetActive(false);
-        GameManager.Instance.ResultPanel.SetActive(true);
-        GameManager.Instance.ResultText.text = "경기 결과\n" + GameManager.Instance.RangkingLogText.text;
+        RankingBoardManager.Instance.AimJoystick.SetActive(false);
+        RankingBoardManager.Instance.ResponePanel.SetActive(false);
+        RankingBoardManager.Instance.ResultPanel.SetActive(true);
+        RankingBoardManager.Instance.ResultText.text = "경기 결과\n" + RankingBoardManager.Instance.RangkingLogText.text;
     }
 
     public void OnReadyState()
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            GameStateManager.Instance.ChangeGameStateForAllUser(GameStateManager.GameState.Ready);
+            ChangeGameStateForAllUser(GameState.Ready);
         }
     }
 
     IEnumerator ReadyCoroutine()
     {
-        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "3",200);
-        yield return new WaitForSeconds(1f);
-        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "2", 200);
-        yield return new WaitForSeconds(1f);
-        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "1", 200);
-        yield return new WaitForSeconds(1f);
-        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "게임 시작!", 200);
+        RankingBoardManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "3",200);
+        yield return waitForSecond;
+        RankingBoardManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "2", 200);
+        yield return waitForSecond;
+        RankingBoardManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "1", 200);
+        yield return waitForSecond;
+        RankingBoardManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "게임 시작!", 200);
 
 
         PV.RPC("ChangeGameStateForAllUser", RpcTarget.AllBuffered,GameState.Fight);
 
-        yield return new WaitForSeconds(1f);
-        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "",100);
+        yield return waitForSecond;
+        RankingBoardManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "",100);
     }
 }

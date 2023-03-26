@@ -9,12 +9,10 @@ public class PlayerAttack : MonoBehaviourPunCallbacks
     public PhotonView PV;
     private playerScript player;
     private GameObject gunObject;
-    private Animator characterAnim;
-    private Animator gunAni;
+    private Animator characterAnim, gunAni;
     private SpriteRenderer spriteRender;
 
-    private readonly float attackCoolTime = 0.25f;
-    private float attackCoolTimer = 0f;
+    Timer.TimerStruct attackTimer = new Timer.TimerStruct(0.25f);
 
     // Start is called before the first frame update
     private void Start()
@@ -34,21 +32,31 @@ public class PlayerAttack : MonoBehaviourPunCallbacks
     // Update is called once per frame
     private void Update()
     {
+        RunTimer();
+        if (Input.GetKeyDown(KeyCode.Space)) Attack();
+    }
+
+    void RunTimer()
+    {
         if (PV.IsMine)
         {
-            CheckAndRunAttackCoolTime();
+            if (attackTimer.isCoolTime())
+            {
+                attackTimer.RunTimer();
+                if(attackTimer.isCoolTime() == false)
+                    gunAni.SetBool("isShot", false);
+            }
         }
-        if (Input.GetKeyDown(KeyCode.Space)) Attack();
     }
 
     public void Attack()
     {
         if (player.isActive == false) return;
-        if (attackCoolTimer > 0f) return;
+        if (attackTimer.isCoolTime()) return;
 
+        attackTimer.ResetCoolTime();
         SoundManager.Instance.PlayShootingSound();
-        OnAttackCoolTime(attackCoolTime);
-        onAttackAnimation();
+        OnAttackAnimation();
         PV.RPC("ShootRPC", RpcTarget.AllBuffered, PhotonNetwork.NickName);
     }
 
@@ -61,28 +69,9 @@ public class PlayerAttack : MonoBehaviourPunCallbacks
         bullet.transform.rotation = gunObject.GetComponent<Transform>().rotation;
     }
 
-    private void OnAttackCoolTime(float attackCoolTime)
-    {
-        attackCoolTimer = attackCoolTime;
-    }
-
-    private void onAttackAnimation()
+    private void OnAttackAnimation()
     {
         gunAni.SetBool("isShot", true);
         characterAnim.SetTrigger("shot");
-    }
-
-    private void CheckAndRunAttackCoolTime()
-    {
-        if (attackCoolTimer > 0)
-        {
-            attackCoolTimer -= Time.deltaTime;
-
-            if (attackCoolTimer <= 0)
-            {
-                attackCoolTimer = 0;
-                gunAni.SetBool("isShot", false);
-            }
-        }
     }
 }

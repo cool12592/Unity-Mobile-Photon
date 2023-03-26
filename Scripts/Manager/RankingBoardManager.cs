@@ -6,25 +6,21 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
 using System;
-public class GameManager : MonoBehaviour
+public class RankingBoardManager : MonoBehaviour
 {
     public PhotonView PV;
-    private static GameManager instance = null;
+    private static RankingBoardManager instance = null;
     private Text ScreenText;
     public Text RangkingLogText { get; private set; }
     private Queue<KeyValuePair<string, string>> killLogQueue = new Queue<KeyValuePair<string, string>>();
     private Dictionary<string, int> RankingBoard = new Dictionary<string, int>();
-
-    private readonly float rankingBoardsynchCoolTime = 1f;
-    private float rankingBoardsynchCoolTimer = 1f;
   
-    public GameObject myplayer;
-    public GameObject StartButton;
-    public GameObject AimJoystick;
-    public GameObject ResponePanel;
-    public GameObject ResultPanel;
+    public GameObject myplayer, StartButton, AimJoystick, ResponePanel, ResultPanel;
     public Button ReGameButton;
     public Text ResultText;
+
+    IEnumerator rankingBoardCoroutine;
+    WaitForSeconds waitForSecnds = new WaitForSeconds(1f);
 
     private void Awake()
     {
@@ -40,7 +36,7 @@ public class GameManager : MonoBehaviour
         //Screen.SetResolution(960, 540, false);
     }
 
-    public static GameManager Instance
+    public static RankingBoardManager Instance
     {
         get
         {
@@ -62,28 +58,27 @@ public class GameManager : MonoBehaviour
         ResultPanel = GameObject.Find("Canvas").transform.Find("ResultPanel").gameObject;
         ReGameButton = ResultPanel.transform.Find("regameBTN").gameObject.GetComponent<Button>();
         ResultText = ResultPanel.transform.Find("resultText").gameObject.GetComponent<Text>();
+
     }
 
-    //왜 rankingBoard 동기화해줘야되냐면 방장떠나면 다른사람이 방장되서 rankingBoard써야하니까
-    //그리고 custom property는 object 형식이라 박싱언박싱일어나서 안좋은듯
-    private void Update()
+    public void StartRankingBoardCoroutine()
     {
-        CheckAndRunRankingBoardCoolTime();
+        if (PhotonNetwork.IsMasterClient == false)
+            return;
+
+        if (rankingBoardCoroutine != null)
+            return;
+
+        rankingBoardCoroutine = RankingBoardCoroutine();
+        StartCoroutine(rankingBoardCoroutine);
     }
 
-    void CheckAndRunRankingBoardCoolTime()
+    IEnumerator RankingBoardCoroutine()
     {
-        if (PhotonNetwork.IsMasterClient)
+        while (true)
         {
-            if (rankingBoardsynchCoolTimer > 0f) //쿨타임마다 딕셔너리 동기화 (딕셔너리 복사작업을 프레임마다 하는건 애바인듯)
-            {
-                rankingBoardsynchCoolTimer -= Time.deltaTime;
-                if (rankingBoardsynchCoolTimer < 0f)
-                {
-                    SynchRankingBoard(); //동기화해주고
-                    rankingBoardsynchCoolTimer = rankingBoardsynchCoolTime; //쿨타임초기화  
-                }
-            }
+            SynchRankingBoard();
+            yield return waitForSecnds;
         }
     }
 

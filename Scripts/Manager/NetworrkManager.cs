@@ -51,9 +51,10 @@ public class NetworrkManager : MonoBehaviourPunCallbacks
         //방장입장용 (밑에선안됨)
         if (PhotonNetwork.IsMasterClient)
         {
+            RankingBoardManager.Instance.StartRankingBoardCoroutine();
             GameStateManager.Instance.ChangeGameState(GameStateManager.GameState.Lobby);
-
-            GameManager.Instance.UserJoin(PhotonNetwork.LocalPlayer.NickName);
+            RankingBoardManager.Instance.UserJoin(PhotonNetwork.LocalPlayer.NickName);
+            
         }
     }
 
@@ -64,7 +65,7 @@ public class NetworrkManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            GameManager.Instance.UserJoin(newPlayer.NickName);
+            RankingBoardManager.Instance.UserJoin(newPlayer.NickName);
         }
     }
 
@@ -78,7 +79,8 @@ public class NetworrkManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            GameManager.Instance.UserLeft(otherPlayer.NickName);
+            RankingBoardManager.Instance.StartRankingBoardCoroutine();
+            RankingBoardManager.Instance.UserLeft(otherPlayer.NickName);
         }
     }
 
@@ -91,13 +93,13 @@ public class NetworrkManager : MonoBehaviourPunCallbacks
     public void spawn()
     {
         PhotonNetwork.Instantiate("Player", new Vector3(Random.Range(-10f,10f), Random.Range(-5f, 5f),0), Quaternion.identity);
-        GameManager.Instance.ResponePanel.SetActive(false);
+        RankingBoardManager.Instance.ResponePanel.SetActive(false);
     }
 
     public void NewGameSpawn()
     {
         PhotonNetwork.Instantiate("Player", new Vector3(Random.Range(-10f, 10f), Random.Range(-5f, 5f), 0), Quaternion.identity);
-        GameManager.Instance.ResultPanel.SetActive(false);
+        RankingBoardManager.Instance.ResultPanel.SetActive(false);
 
         GameStateManager.Instance.ChangeGameState(GameStateManager.GameState.Lobby);
     }

@@ -22,10 +22,6 @@ public class PlayerPistol : MonoBehaviourPunCallbacks
     {
         PV = GetComponent<PhotonView>();
           
-       // gunObject = gameObject.transform.Find("gun").gameObject;
-        //gunSpriteRender = gunObject.GetComponent<SpriteRenderer>();
-        //spriteRender = GetComponent<SpriteRenderer>();
-
         if (PV.IsMine)
         {
             aimObject = gameObject.transform.Find("aim").gameObject;

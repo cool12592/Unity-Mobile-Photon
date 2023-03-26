@@ -49,12 +49,6 @@ public class SoundManager : MonoBehaviour
         bgm.Play();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void PlayShootingSound()
     {
         if (!ShootingSound.isPlaying)

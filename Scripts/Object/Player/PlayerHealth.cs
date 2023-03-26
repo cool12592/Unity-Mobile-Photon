@@ -7,6 +7,8 @@ using Photon.Realtime;
 
 public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
 {
+    
+    
     public PhotonView PV;
     [SerializeField]
     private Image healthImage;
@@ -14,12 +16,11 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
     private Animator characterAnim;
     private playerScript player;
 
-    private readonly float damagedCoolTime = 0.35f;
-    private float damagedCoolTimer = 0f;
     private bool invincibility = false;
     private string recentAttacker;
-    
-    private enum ColorList{Original,DamagedColor };
+
+    private enum ColorList { Original, DamagedColor };
+    Timer.TimerStruct healthTimer = new Timer.TimerStruct(0.35f);
 
     // Start is called before the first frame update
     void Start()
@@ -36,12 +37,22 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
     // Update is called once per frame
     void Update()
     {
-        if (PV.IsMine)
-        {
-            RunDamagedCoolTime();
-        }
+        RunTimer();
         if (Input.GetKeyDown(KeyCode.T)) TakeDamage(PhotonNetwork.NickName);
 
+    }
+
+    void RunTimer()
+    {
+        if (PV.IsMine)
+        {
+            if(healthTimer.isCoolTime())
+            {
+                healthTimer.RunTimer();
+                if(healthTimer.isCoolTime() == false)
+                    ChangeColor(ColorList.Original);
+            }
+        }
     }
 
     public void OnInvincibility()
@@ -65,9 +76,14 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
         if (invincibility) return;
 
         recentAttacker = enemyName;
-        PV.RPC("ChangeColorRPC", RpcTarget.AllBuffered, (int)ColorList.DamagedColor);
-        OnDamagedCoolTime(damagedCoolTime);
+        ChangeColor(ColorList.DamagedColor);
+        healthTimer.ResetCoolTime();
         ReducedHP(0.1f);
+    }
+
+    private void ChangeColor(ColorList color)
+    {
+        PV.RPC("ChangeColorRPC", RpcTarget.AllBuffered, (int)color);
     }
 
     [PunRPC]
@@ -87,26 +103,6 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
 
     }
 
-
-    private void OnDamagedCoolTime(float damagedCoolTime)
-    {
-        damagedCoolTimer = damagedCoolTime;
-    }
-
-    private void RunDamagedCoolTime()
-    {
-        if (damagedCoolTimer > 0f)
-        {
-            damagedCoolTimer -= Time.deltaTime;
-
-            if (damagedCoolTimer <= 0)
-            {
-                damagedCoolTimer = 0;
-                PV.RPC("ChangeColorRPC", RpcTarget.AllBuffered, (int)ColorList.Original);
-            }
-        }
-    }
-
     private void ReducedHP(float num)
     {
         healthImage.fillAmount -= num;
@@ -121,7 +117,7 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
     {
         player.isActive = false;
         rigidBody.velocity = Vector2.zero;
-        GameManager.Instance.ReportTheKill(recentAttacker, PhotonNetwork.NickName);
+        RankingBoardManager.Instance.ReportTheKill(recentAttacker, PhotonNetwork.NickName);
         characterAnim.SetTrigger("death");
     }
 
@@ -130,7 +126,7 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (PV.IsMine)
         {
-            GameManager.Instance.ResponePanel.SetActive(true);
+            RankingBoardManager.Instance.ResponePanel.SetActive(true);
             PV.RPC("DestroyRPC", RpcTarget.AllBuffered); // AllBuffered로 해야 제대로 사라져 복제버그가 안 생긴다
         }
     }
