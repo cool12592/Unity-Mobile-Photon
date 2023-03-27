@@ -15,6 +15,7 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
     private Rigidbody2D rigidBody;
     private Animator characterAnim;
     private playerScript player;
+    private SpriteRenderer spriteRender;
 
     private bool invincibility = false;
     private string recentAttacker;
@@ -30,6 +31,7 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
         {
             rigidBody = gameObject.GetComponent<Rigidbody2D>();
             characterAnim = GetComponent<Animator>();
+            spriteRender = GetComponent<SpriteRenderer>();
             player = GetComponent<playerScript>();
         }
     }
@@ -92,10 +94,10 @@ public class PlayerHealth : MonoBehaviourPunCallbacks, IPunObservable
         switch ((ColorList)color)
         {
             case ColorList.Original:
-                GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+                spriteRender.color = new Color(1f, 1f, 1f, 1f);
                 break;
             case ColorList.DamagedColor:
-                GetComponent<SpriteRenderer>().color = new Color(1f, 0.1f, 0.1f, 0.5f);
+                spriteRender.color = new Color(1f, 0.1f, 0.1f, 0.5f);
                 break;
             default:
                 break;
