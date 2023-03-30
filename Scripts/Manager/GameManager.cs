@@ -15,16 +15,14 @@ public class GameManager : MonoBehaviour
     private Queue<KeyValuePair<string, string>> killLogQueue = new Queue<KeyValuePair<string, string>>();
     private Dictionary<string, int> RankingBoard = new Dictionary<string, int>();
   
-    public GameObject myplayer, StartButton, AimJoystick, ResponePanel, ResultPanel;
-    public Button ReGameButton;
-    public Text ResultText;
+    public GameObject myplayer, ResponePanel, ResultPanel;
 
     IEnumerator rankingBoardCoroutine;
     WaitForSeconds waitForSecnds = new WaitForSeconds(1f);
 
     private void Awake()
     {
-        if (null == instance)
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(this.gameObject);
@@ -33,14 +31,13 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-        //Screen.SetResolution(960, 540, false);
     }
 
     public static GameManager Instance
     {
         get
         {
-            if (null == instance)
+            if (instance == null)
             {
                 return null;
             }
@@ -52,13 +49,8 @@ public class GameManager : MonoBehaviour
     {
         ScreenText = GameObject.Find("Canvas").transform.Find("ScreenText").gameObject.GetComponent<Text>();
         RangkingLogText = GameObject.Find("Canvas").transform.Find("RankingLog").gameObject.GetComponent<Text>();
-        StartButton = GameObject.Find("Canvas").transform.Find("gameStartBTN").gameObject;
-        AimJoystick = GameObject.Find("Canvas").transform.Find("Aim_Joystick").gameObject;
         ResponePanel = GameObject.Find("Canvas").transform.Find("RespawnPanel").gameObject;
         ResultPanel = GameObject.Find("Canvas").transform.Find("ResultPanel").gameObject;
-        ReGameButton = ResultPanel.transform.Find("regameBTN").gameObject.GetComponent<Button>();
-        ResultText = ResultPanel.transform.Find("resultText").gameObject.GetComponent<Text>();
-
     }
 
     public void StartRankingBoardCoroutine()

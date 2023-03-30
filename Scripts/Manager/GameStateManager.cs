@@ -1,11 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Photon.Pun;
-using Photon.Realtime;
-using System.Linq;
 using System;
+
 public class GameStateManager : MonoBehaviour
 {
     public PhotonView PV;
@@ -19,11 +17,9 @@ public class GameStateManager : MonoBehaviour
     public event Action FightStateAction;
     public event Action ResultStateAction;
 
-    WaitForSeconds waitForSecond = new WaitForSeconds(1f);
-
     private void Awake()
     {
-        if (null == instance)
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(this.gameObject);
@@ -38,7 +34,7 @@ public class GameStateManager : MonoBehaviour
     {
         get
         {
-            if (null == instance)
+            if (instance == null)
             {
                 return null;
             }
@@ -50,7 +46,7 @@ public class GameStateManager : MonoBehaviour
     {
         PV = GetComponent<PhotonView>();
         NowGameState = GameState.None;
-        GameObject.Find("Canvas").transform.Find("gameStartBTN").gameObject.GetComponent<Button>().onClick.AddListener(OnReadyState);
+        gameObject.AddComponent<GameStateExecute>();
     }
 
     [PunRPC]
@@ -93,63 +89,20 @@ public class GameStateManager : MonoBehaviour
     private void EnterLobbyState()
     {
         LobbyStateAction?.Invoke();
-
-        if (PhotonNetwork.IsMasterClient)
-            GameManager.Instance.StartButton.SetActive(true);
     }
 
     private void EnterReadyState()
     {
         ReadyStateAction?.Invoke();
-
-        if (GameManager.Instance.ReGameButton.IsActive())
-            GameManager.Instance.ReGameButton.onClick.Invoke();
-
-        if (PhotonNetwork.IsMasterClient)
-            GameManager.Instance.StartButton.SetActive(false);
-        
-        if (PhotonNetwork.IsMasterClient)
-            StartCoroutine(ReadyCoroutine());
     }
 
     private void EnterFightState()
     {
         FightStateAction?.Invoke();
-
-        GameManager.Instance.AimJoystick.SetActive(true);
     }
 
     private void EnterResultState()
     {
         ResultStateAction?.Invoke();
-        GameManager.Instance.AimJoystick.SetActive(false);
-        GameManager.Instance.ResponePanel.SetActive(false);
-        GameManager.Instance.ResultPanel.SetActive(true);
-        GameManager.Instance.ResultText.text = "경기 결과\n" + GameManager.Instance.RangkingLogText.text;
-    }
-
-    public void OnReadyState()
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            ChangeGameStateForAllUser(GameState.Ready);
-        }
-    }
-
-    IEnumerator ReadyCoroutine()
-    {
-        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "3",200);
-        yield return waitForSecond;
-        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "2", 200);
-        yield return waitForSecond;
-        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "1", 200);
-        yield return waitForSecond;
-        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "게임 시작!", 200);
-
-
-        PV.RPC("ChangeGameStateForAllUser", RpcTarget.AllBuffered,GameState.Fight);
-
-        yield return waitForSecond;
-        GameManager.Instance.PV.RPC("SetScreenTextRPC", RpcTarget.AllBuffered, "",100);
     }
 }

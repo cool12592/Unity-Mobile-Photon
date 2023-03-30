@@ -13,15 +13,15 @@ public class SoundManager : MonoBehaviour
     private AudioSource DashSound;
     private AudioSource ShootingSound;
 
-    void Awake()
+    private void Awake()
     {
-        if (null == instance)
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
         else
-        {       
+        {
             Destroy(this.gameObject);
         }
     }
@@ -30,7 +30,7 @@ public class SoundManager : MonoBehaviour
     {
         get
         {
-            if (null == instance)
+            if (instance == null)
             {
                 return null;
             }
